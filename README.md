@@ -1,1 +1,1 @@
-# CSC360
+# CSC360 Course Repository
