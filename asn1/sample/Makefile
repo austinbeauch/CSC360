@@ -13,7 +13,6 @@ inf: inf.c
 args: args.c
 	gcc args.c -o args
 
-	
 .PHONY clean:
 clean:
 	-rm -rf *.o *.exe

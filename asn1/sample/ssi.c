@@ -30,7 +30,8 @@ int main(){
 			printf("You said: %s\n", reply);
 			pid_t p = fork();
 			if(p == 0) {
-				// execpv()
+				char* arg[] = {"ls", "-a", "..", NULL};
+				execvp(arg[0], arg);
 				printf("Inside child process: %d\n", p);
 			}
 			else if (p > 0) {
@@ -40,6 +41,7 @@ int main(){
 			}
 			else {
 				perror("ERROR IN FORK");
+				exit(-1);
 			}
 			
 		}
