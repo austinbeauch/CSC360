@@ -33,24 +33,23 @@ int main(){
 		}
 		tokens[index] = NULL;
 		if (!strcmp(reply, "exit")) {
-			bailout = 1;
-			free(reply);
-			return 0;
-		} else {
+			exit(0);
+		} 
+		if(!strcmp(tokens[0], "cd")){
+			int x;
+			if(tokens[1] == NULL || !strcmp(tokens[1], "~")){
+				int x = chdir(getenv("HOME"));
+			} else {
+				int x = chdir(tokens[1]);	
+			}
+			if(x == -1){
+				printf("chdir error\n");
+			}
+		}
+		else {
 			pid_t p = fork();
-			
 			if(p == 0) { // in child process	
-				if(!strcmp(tokens[0], "cd")){
-					if(tokens[1] == NULL || !strcmp(tokens[1], "~")){
-						chdir(getenv("HOME"));
-					}
-					else{
-						chdir(tokens[1]);	
-					}
-				}
-				else {
-					execvp(tokens[0], tokens);
-				}
+				execvp(tokens[0], tokens);
 			} else if (p > 0) { // in parent process
 				wait(NULL);
 			} else {
@@ -61,5 +60,5 @@ int main(){
 		}
 		free(reply);
 	}
-	return 0;
+	exit(0);
 }
