@@ -64,6 +64,8 @@ int main(){
 			pid_t p = fork();
 			if(p == 0) { // in child process
 				execvp(tokens[0], tokens);
+				perror("EXECVP ERROR");
+				exit(1);
 			} else if (p > 0) { // in parent process
 				wait(NULL);
 			} else {
