@@ -20,7 +20,7 @@ int main(){
 		strcat (str, cwd);
 		strcat (str, " > ");
 		char* reply = readline(str);
-
+		
 		// string tokenization
 		char* token = strtok(reply, " ");
 		char* tokens[256];
@@ -31,8 +31,10 @@ int main(){
 			token = strtok(NULL, " ");
 		}
 		tokens[index] = NULL;
-
-		if (!strcmp(reply, "exit")) {
+		if(reply[0] == '\0') {
+			
+		}
+		else if (!strcmp(reply, "exit")) {
 			exit(0);
 		}
 		else if(!strcmp(tokens[0], "cd")){
@@ -50,6 +52,8 @@ int main(){
 			pid_t p = fork();
 			if(p == 0) { // in child process
 				execvp(tokens[1], tokens + 1);
+				perror("EXECVP ERROR");
+				exit(1);
 			} else if (p > 0) { // in parent process
 				waitpid(p, NULL, WNOHANG);
 			} else {
@@ -67,7 +71,7 @@ int main(){
 				perror("EXECVP ERROR");
 				exit(1);
 			} else if (p > 0) { // in parent process
-				wait(NULL);
+				waitpid(p, NULL, 0);
 			} else {
 				perror("ERROR IN FORK");
 				exit(-1);
