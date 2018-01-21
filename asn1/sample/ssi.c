@@ -31,12 +31,16 @@ int main(){
 			token = strtok(NULL, " ");
 		}
 		tokens[index] = NULL;
-		if(reply[0] == '\0') {
-			
+		
+		//if the input is nothing, or contains only whitespace
+		if(reply[0] == '\0' || (isspace(reply[0]) && tokens[0] == NULL)) {
+			continue;
 		}
-		else if (!strcmp(reply, "exit")) {
+			
+		else if (!strcmp(tokens[0], "exit")) {
 			exit(0);
 		}
+		
 		else if(!strcmp(tokens[0], "cd")){
 			int x;
 			if(tokens[1] == NULL || !strcmp(tokens[1], "~")){
