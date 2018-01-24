@@ -1,8 +1,8 @@
 .phony all:
 all: ssi
 
-ssi: ssi.c
-	gcc ssi.c -lreadline -lhistory -ltermcap -o ssi
+ssi: ssi.c linkedlist.c
+	gcc ssi.c linkedlist.c -lreadline -lhistory -ltermcap -o ssi
 
 
 .PHONY clean:

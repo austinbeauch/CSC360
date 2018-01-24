@@ -20,27 +20,26 @@ int main(){
 		strcat (str, cwd);
 		strcat (str, " > ");
 		char* reply = readline(str);
-		
 		// string tokenization
-		char* token = strtok(reply, " ");
+		char* arguments = strtok(reply, " \n");
 		char* tokens[256];
 		int index = 0;
-		while (token) {
-			tokens[index] = token;
+		while (arguments) {
+			tokens[index] = arguments;
 			index++;
-			token = strtok(NULL, " ");
+			arguments = strtok(NULL, " \n");
 		}
 		tokens[index] = NULL;
-		
+
 		//if the input is nothing, or contains only whitespace
 		if(reply[0] == '\0' || (isspace(reply[0]) && tokens[0] == NULL)) {
 			continue;
 		}
-			
+
 		else if (!strcmp(tokens[0], "exit")) {
 			exit(0);
 		}
-		
+
 		else if(!strcmp(tokens[0], "cd")){
 			int x;
 			if(tokens[1] == NULL || !strcmp(tokens[1], "~")){
@@ -49,7 +48,7 @@ int main(){
 				int x = chdir(tokens[1]);
 			}
 			if(x == -1){
-				printf("chdir error\n");
+				perror("CHDIR ERROR\n");
 			}
 		}
 		else if(!strcmp(tokens[0], "bg")){
@@ -66,7 +65,7 @@ int main(){
 			}
 		}
 		else if(!strcmp(tokens[0], "bglist")){
-
+			// append(p, tokens)
 		}
 		else {
 			pid_t p = fork();
@@ -78,7 +77,7 @@ int main(){
 				waitpid(p, NULL, 0);
 			} else {
 				perror("ERROR IN FORK");
-				exit(-1);
+				// exit(-1);
 			}
 
 		}
