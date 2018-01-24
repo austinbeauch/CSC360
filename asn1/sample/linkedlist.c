@@ -25,7 +25,7 @@ void append(pid_t p, char** command){
 	
 	if(list_length == 0){
 		head = new;
-	} else{
+	} else {
 		node* curr = head;
 		while(head->next != NULL){
 			curr = curr->next;
