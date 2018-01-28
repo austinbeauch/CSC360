@@ -5,6 +5,7 @@
 #include <sys/wait.h>
 #include <readline/readline.h>
 #include <readline/history.h>
+#include "linkedlist.h"
 
 int main(){
 	int bailout = 0;
@@ -20,6 +21,7 @@ int main(){
 		strcat (str, cwd);
 		strcat (str, " > ");
 		char* reply = readline(str);
+
 		// string tokenization
 		char* arguments = strtok(reply, " \n");
 		char* tokens[256];
@@ -58,6 +60,7 @@ int main(){
 				perror("EXECVP ERROR");
 				exit(1);
 			} else if (p > 0) { // in parent process
+				append(p, tokens);
 				waitpid(p, NULL, WNOHANG);
 			} else {
 				perror("ERROR IN FORK");
@@ -65,7 +68,7 @@ int main(){
 			}
 		}
 		else if(!strcmp(tokens[0], "bglist")){
-			// append(p, tokens)
+			print_list();
 		}
 		else {
 			pid_t p = fork();

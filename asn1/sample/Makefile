@@ -1,5 +1,5 @@
 .phony all:
-all: ssi
+all: ssi linkedlist.c linkedlist.h
 
 ssi: ssi.c linkedlist.c
 	gcc ssi.c linkedlist.c -lreadline -lhistory -ltermcap -o ssi
