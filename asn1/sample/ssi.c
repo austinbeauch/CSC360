@@ -9,16 +9,31 @@
 
 extern int list_length;
 
+void background(char** tokens){
+	if (tokens[1] == NULL){
+			printf("Enter process to run in background\n");
+		} else {
+			pid_t p = fork();
+			if(p == 0) { // in child process
+				execvp(tokens[1], tokens + 1);
+				perror("EXECVP ERROR");
+				exit(1);
+			} else if (p > 0) { // in parent process
+				append(p, tokens);
+			} else {
+				perror("ERROR IN FORK");
+			}
+		}
+}
 
-int create_fork(char** tokens, int option){
+void create_fork(char** tokens){
 	pid_t p = fork();
 	if(p == 0) { // in child process
 		execvp(tokens[0], tokens);
 		perror("EXECVP ERROR");
 		exit(1);
 	} else if (p > 0) { // in parent process
-		waitpid(p, NULL, option);
-		return p;
+		waitpid(p, NULL, 0);
 	} else {
 		perror("ERROR IN FORK");
 	}
@@ -70,7 +85,7 @@ int main(){
 
 		else if(!strcmp(tokens[0], "cd")){
 			//chdir(getenv("HOME"));
-			
+
 			int x;
 			if(tokens[1] == NULL || !strcmp(tokens[1], "~")){
 				x = chdir(getenv("HOME"));
@@ -83,20 +98,13 @@ int main(){
 		}
 
 		else if(!strcmp(tokens[0], "bg")){
-			if (tokens[1] == NULL){
-				printf("Enter process to run in background\n");
-			} else {
-				int p = create_fork(tokens + 1, WNOHANG);
-				if (p > 0) { // in parent process
-					append(p, tokens);
-				}
-			}
+			background(tokens);
 		}
 		else if(!strcmp(tokens[0], "bglist")){
 			print_list();
 		}
 		else {
-			create_fork(tokens, 0);
+			create_fork(tokens);
 		}
 		free(reply);
 	}
