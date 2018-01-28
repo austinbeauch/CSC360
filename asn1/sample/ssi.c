@@ -7,6 +7,8 @@
 #include <readline/history.h>
 #include "linkedlist.h"
 
+extern int list_length;
+
 int main(){
 	int bailout = 0;
 	while (!bailout) {
@@ -22,6 +24,15 @@ int main(){
 		strcat (str, " > ");
 		char* reply = readline(str);
 
+		// check for terminating processes
+		if(list_length>0){
+			pid_t ter = waitpid(0, NULL, WNOHANG);
+			while(ter > 0){  // a process has terminated
+				deleting(ter);
+				ter = waitpid(0, NULL, WNOHANG);
+			}
+		}
+
 		// string tokenization
 		char* arguments = strtok(reply, " \n");
 		char* tokens[256];
@@ -35,7 +46,7 @@ int main(){
 
 		//if the input is nothing, or contains only whitespace
 		if(reply[0] == '\0' || (isspace(reply[0]) && tokens[0] == NULL)) {
-			continue;
+			// continue;
 		}
 
 		else if (!strcmp(tokens[0], "exit")) {
@@ -53,18 +64,23 @@ int main(){
 				perror("CHDIR ERROR\n");
 			}
 		}
+
 		else if(!strcmp(tokens[0], "bg")){
-			pid_t p = fork();
-			if(p == 0) { // in child process
-				execvp(tokens[1], tokens + 1);
-				perror("EXECVP ERROR");
-				exit(1);
-			} else if (p > 0) { // in parent process
-				append(p, tokens);
-				waitpid(p, NULL, WNOHANG);
+			if (tokens[1] == NULL){
+				printf("Enter process to run in background\n");
 			} else {
-				perror("ERROR IN FORK");
-				exit(-1);
+				pid_t p = fork();
+				if(p == 0) { // in child process
+					execvp(tokens[1], tokens + 1);
+					perror("EXECVP ERROR");
+					exit(1);
+				} else if (p > 0) { // in parent process
+					append(p, tokens);
+					// waitpid(p, NULL, WNOHANG);
+				} else {
+					perror("ERROR IN FORK");
+					exit(-1);
+				}
 			}
 		}
 		else if(!strcmp(tokens[0], "bglist")){
