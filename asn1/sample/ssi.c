@@ -9,10 +9,25 @@
 
 extern int list_length;
 
+
+int create_fork(char** tokens, int option){
+	pid_t p = fork();
+	if(p == 0) { // in child process
+		execvp(tokens[0], tokens);
+		perror("EXECVP ERROR");
+		exit(1);
+	} else if (p > 0) { // in parent process
+		waitpid(p, NULL, option);
+		return p;
+	} else {
+		perror("ERROR IN FORK");
+	}
+}
+
 int main(){
 	int bailout = 0;
 	while (!bailout) {
-		char str[80];
+		char str[256];
 		char cwd[256];
 
 		if (getcwd(cwd, sizeof(cwd)) == NULL)
@@ -54,11 +69,13 @@ int main(){
 		}
 
 		else if(!strcmp(tokens[0], "cd")){
+			//chdir(getenv("HOME"));
+			
 			int x;
 			if(tokens[1] == NULL || !strcmp(tokens[1], "~")){
-				int x = chdir(getenv("HOME"));
+				x = chdir(getenv("HOME"));
 			} else {
-				int x = chdir(tokens[1]);
+				x = chdir(tokens[1]);
 			}
 			if(x == -1){
 				perror("CHDIR ERROR\n");
@@ -69,17 +86,9 @@ int main(){
 			if (tokens[1] == NULL){
 				printf("Enter process to run in background\n");
 			} else {
-				pid_t p = fork();
-				if(p == 0) { // in child process
-					execvp(tokens[1], tokens + 1);
-					perror("EXECVP ERROR");
-					exit(1);
-				} else if (p > 0) { // in parent process
+				int p = create_fork(tokens + 1, WNOHANG);
+				if (p > 0) { // in parent process
 					append(p, tokens);
-					// waitpid(p, NULL, WNOHANG);
-				} else {
-					perror("ERROR IN FORK");
-					exit(-1);
 				}
 			}
 		}
@@ -87,18 +96,7 @@ int main(){
 			print_list();
 		}
 		else {
-			pid_t p = fork();
-			if(p == 0) { // in child process
-				execvp(tokens[0], tokens);
-				perror("EXECVP ERROR");
-				exit(1);
-			} else if (p > 0) { // in parent process
-				waitpid(p, NULL, 0);
-			} else {
-				perror("ERROR IN FORK");
-				// exit(-1);
-			}
-
+			create_fork(tokens, 0);
 		}
 		free(reply);
 	}

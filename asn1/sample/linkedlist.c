@@ -12,6 +12,7 @@ typedef struct bg_pro{
 node* head = NULL;
 int list_length = 0;
 
+
 void append(pid_t pid, char** command){
 	node* new = (node*)malloc(sizeof(node));
 	new->pid = pid;
@@ -31,13 +32,13 @@ void append(pid_t pid, char** command){
 		}
 		curr->next = new;
 	}
+	new->next = NULL;
 	list_length++;
 }
 
 void deleting(pid_t ter){
 	list_length--;
 	node* curr = head;
-	node* prev = NULL;
 	if(head->pid == ter){
 		printf("%d: %shas terminated.\n", head->pid, head->command);
 		head = head->next;
@@ -47,17 +48,15 @@ void deleting(pid_t ter){
 		}
 		printf("%d: %shas terminated.\n", curr->next->pid, curr->next->command);
 		curr->next = curr->next->next;
+		free(curr->next);
 	}
 }
 
 void print_list(){
-	if(list_length > 0){
-		node* curr = head;
-		while(curr->next != NULL){
-			printf("%d: %s\n", curr->pid, curr->command);
-			curr = curr->next;
-		}
+	node* curr = head;
+	while(curr != NULL){
 		printf("%d: %s\n", curr->pid, curr->command);
+		curr = curr->next;
 	}
 	printf("Total background jobs: %d\n", list_length);
 }
