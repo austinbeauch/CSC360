@@ -9,7 +9,6 @@
 
 extern int list_length;
 
-
 void background(char** tokens){
 	if (tokens[1] == NULL){
 			printf("Enter process to run in background\n");
@@ -85,6 +84,8 @@ int main(){
 		}
 
 		else if(!strcmp(tokens[0], "cd")){
+			//chdir(getenv("HOME"));
+
 			int x;
 			if(tokens[1] == NULL || !strcmp(tokens[1], "~")){
 				x = chdir(getenv("HOME"));
